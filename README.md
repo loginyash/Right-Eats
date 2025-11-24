@@ -36,8 +36,8 @@ A premium, full-stack restaurant discovery platform for Bikaner featuring smooth
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/YOUR_USERNAME/right-eats.git
-cd right-eats
+git clone https://github.com/loginyash/Right-Eats.git
+cd Right-Eats
 ```
 
 2. Install dependencies:
