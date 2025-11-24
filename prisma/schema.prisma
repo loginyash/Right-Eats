@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Restaurant {
+  id                      String         @id @default(uuid())
+  name                    String
+  cuisine                 String
+  description             String
+  minimal_description     String
+  address                 String
+  rating                  Float
+  price_range             String
+  images                  String         // JSON array stored as string
+  average_bill_per_person Int?
+  createdAt               DateTime       @default(now())
+  updatedAt               DateTime       @updatedAt
+  
+  popular_dishes          PopularDish[]
+  reviews                 Review[]
+  bookings                Booking[]
+}
+
+model PopularDish {
+  id             String     @id @default(uuid())
+  restaurant_id  String
+  name           String
+  description    String
+  price          Int
+  zomato_price   Int?
+  swiggy_price   Int?
+  is_bestseller  Boolean    @default(false)
+  
+  restaurant     Restaurant @relation(fields: [restaurant_id], references: [id], onDelete: Cascade)
+}
+
+model Review {
+  id             String     @id @default(uuid())
+  restaurant_id  String
+  user_id        String
+  user_name      String
+  rating         Int
+  comment        String
+  date           DateTime   @default(now())
+  createdAt      DateTime   @default(now())
+  
+  restaurant     Restaurant @relation(fields: [restaurant_id], references: [id], onDelete: Cascade)
+}
+
+model Booking {
+  id                String     @id @default(uuid())
+  restaurant_id     String
+  user_name         String
+  user_email        String
+  user_phone        String?
+  date              DateTime
+  time              String
+  party_size        Int
+  special_requests  String?
+  status            BookingStatus @default(PENDING)
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  
+  restaurant        Restaurant @relation(fields: [restaurant_id], references: [id], onDelete: Cascade)
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
