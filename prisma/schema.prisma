@@ -21,6 +21,10 @@ model Restaurant {
   price_range             String
   images                  String         // JSON array stored as string
   average_bill_per_person Int?
+  swiggy_url              String?
+  zomato_url              String?
+  delivery_time           String?
+  available_on            String         // JSON array: ["swiggy", "zomato", "direct"]
   createdAt               DateTime       @default(now())
   updatedAt               DateTime       @updatedAt
   

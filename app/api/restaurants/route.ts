@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
         });
 
         // Parse images JSON
-        const restaurantsWithImages = restaurants.map(r => ({
+        const restaurantsWithImages = restaurants.map((r: any) => ({
             ...r,
             images: JSON.parse(r.images),
         }));

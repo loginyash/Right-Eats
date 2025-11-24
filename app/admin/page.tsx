@@ -120,7 +120,7 @@ export default function AdminPage() {
 
     const handleDelete = (id: string) => {
         if (confirm("Are you sure you want to delete this restaurant?")) {
-            setData(data.filter((r) => r.id !== id));
+            setData(data.filter((r: Restaurant) => r.id !== id));
             toast.success("Restaurant deleted successfully");
         }
     };
@@ -128,7 +128,7 @@ export default function AdminPage() {
     const onSubmit = (values: RestaurantFormValues) => {
         if (editingId) {
             setData(
-                data.map((r) =>
+                data.map((r: Restaurant) =>
                     r.id === editingId ? { ...r, ...values } : r
                 )
             );

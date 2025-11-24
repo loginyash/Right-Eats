@@ -9,13 +9,13 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { mockRestaurants } from "@/data/mock";
 import { notFound } from "next/navigation";
-import { Review } from "@/types";
+import { Review, Restaurant } from "@/types";
 import { BookingModal } from "@/components/BookingModal";
 import { Utensils } from "lucide-react";
 
 export default function RestaurantPage({ params }: { params: { id: string } }) {
     const { id } = params;
-    const restaurant = mockRestaurants.find((r) => r.id === id);
+    const restaurant = mockRestaurants.find((r: Restaurant) => r.id === id);
 
     if (!restaurant) {
         notFound();
