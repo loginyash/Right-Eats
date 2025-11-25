@@ -66,15 +66,9 @@ model Booking {
   time              String
   party_size        Int
   special_requests  String?
-  status            BookingStatus @default(PENDING)
+  status            String        @default("PENDING")
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
   
   restaurant        Restaurant @relation(fields: [restaurant_id], references: [id], onDelete: Cascade)
-}
-
-enum BookingStatus {
-  PENDING
-  CONFIRMED
-  CANCELLED
 }

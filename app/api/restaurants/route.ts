@@ -15,12 +15,12 @@ export async function GET(request: NextRequest) {
                     search
                         ? {
                             OR: [
-                                { name: { contains: search, mode: 'insensitive' } },
-                                { cuisine: { contains: search, mode: 'insensitive' } },
+                                { name: { contains: search } },
+                                { cuisine: { contains: search } },
                             ],
                         }
                         : {},
-                    cuisine ? { cuisine: { contains: cuisine, mode: 'insensitive' } } : {},
+                    cuisine ? { cuisine: { contains: cuisine } } : {},
                     priceRange ? { price_range: priceRange } : {},
                 ],
             },
@@ -62,6 +62,7 @@ export async function POST(request: NextRequest) {
                 price_range: body.price_range,
                 images: JSON.stringify(body.images),
                 average_bill_per_person: body.average_bill_per_person,
+                available_on: body.available_on || "Both",
             },
         });
 

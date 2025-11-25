@@ -26,6 +26,7 @@ async function main() {
                 price_range: restaurant.price_range,
                 images: JSON.stringify(restaurant.images),
                 average_bill_per_person: restaurant.average_bill_per_person || null,
+                available_on: "Both",
                 popular_dishes: {
                     create: restaurant.popular_dishes?.map(dish => ({
                         id: dish.id,
@@ -41,7 +42,7 @@ async function main() {
                     create: restaurant.reviews?.map(review => ({
                         id: review.id,
                         user_id: review.user_id,
-                        user_name: review.user_name,
+                        user_name: review.user_name || "Anonymous",
                         rating: review.rating,
                         comment: review.comment,
                         date: new Date(review.date),
