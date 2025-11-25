@@ -1,46 +1,82 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Star, MapPin, Clock, DollarSign, Share2, Heart } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
-import { mockRestaurants } from "@/data/mock";
 import { notFound } from "next/navigation";
 import { Review, Restaurant } from "@/types";
 import { BookingModal } from "@/components/BookingModal";
 import { Utensils } from "lucide-react";
+import { getApiUrl } from "@/lib/api";
 
 export default function RestaurantPage({ params }: { params: { id: string } }) {
     const { id } = params;
-    const restaurant = mockRestaurants.find((r: Restaurant) => r.id === id);
-
-    if (!restaurant) {
-        notFound();
-    }
-
-    const [reviews, setReviews] = useState<Review[]>(restaurant.reviews || []);
+    const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [reviews, setReviews] = useState<Review[]>([]);
     const [newReview, setNewReview] = useState("");
     const [userRating, setUserRating] = useState(5);
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
-    const handleSubmitReview = (e: React.FormEvent) => {
+    useEffect(() => {
+        const fetchRestaurant = async () => {
+            try {
+                const res = await fetch(`${getApiUrl()}/api/restaurants/${id}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setRestaurant(data);
+                    setReviews(data.reviews || []);
+                } else {
+                    notFound();
+                }
+            } catch (error) {
+                console.error("Failed to fetch restaurant:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchRestaurant();
+    }, [id]);
+
+    if (loading) {
+        return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+    }
+
+    if (!restaurant) {
+        return null; // or handle not found
+    }
+
+    const handleSubmitReview = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!newReview.trim()) return;
 
-        const review: Review = {
-            id: Math.random().toString(36).substr(2, 9),
-            user_id: "current-user",
-            user_name: "You",
-            rating: userRating,
-            comment: newReview,
-            date: new Date().toISOString().split("T")[0],
-        };
+        try {
+            const res = await fetch(`${getApiUrl()}/api/restaurants/${id}/reviews`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    rating: userRating,
+                    comment: newReview,
+                    user_name: "You", // In a real app, get from auth context
+                    user_id: "current-user"
+                }),
+            });
 
-        setReviews([review, ...reviews]);
-        setNewReview("");
+            if (res.ok) {
+                const savedReview = await res.json();
+                setReviews([savedReview, ...reviews]);
+                setNewReview("");
+            }
+        } catch (error) {
+            console.error("Failed to submit review:", error);
+        }
     };
 
     return (

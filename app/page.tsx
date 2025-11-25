@@ -7,8 +7,8 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardFooter } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { mockRestaurants } from "@/data/mock";
 import Link from "next/link";
+import { getApiUrl } from "@/lib/api";
 
 const HERO_IMAGES = [
   "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=2000&auto=format&fit=crop",
@@ -21,6 +21,27 @@ export default function Home() {
   const [activeFilter, setActiveFilter] = useState("All");
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
 
+  const [restaurants, setRestaurants] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRestaurants = async () => {
+      try {
+        const res = await fetch(`${getApiUrl()}/api/restaurants`);
+        if (res.ok) {
+          const data = await res.json();
+          setRestaurants(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch restaurants:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRestaurants();
+  }, []);
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentHeroIndex((prev) => (prev + 1) % HERO_IMAGES.length);
@@ -30,7 +51,7 @@ export default function Home() {
 
   const filters = ["All", "Fine Dining", "Street Food", "Cafes", "Sweets", "North Indian"];
 
-  const filteredRestaurants = mockRestaurants.filter((restaurant) => {
+  const filteredRestaurants = restaurants.filter((restaurant) => {
     const matchesSearch = restaurant.name
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
